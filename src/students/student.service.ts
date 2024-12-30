@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Student } from './entities/student.entity';
-import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Injectable()
 export class StudentService {
@@ -12,19 +11,17 @@ export class StudentService {
     private studentRepository: Repository<Student>,
   ) {}
 
-  async update(
-    id: number,
-    updateStudentDto: UpdateStudentDto,
-  ): Promise<Student> {
-    const student = await this.findOne(id);
-    Object.assign(student, updateStudentDto);
-    return await this.studentRepository.save(student);
-  }
   async findOne(id: number): Promise<Student> {
     const student = await this.studentRepository.findOne({ where: { id } });
     if (!student) {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
     return student;
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
+    const student = await this.findOne(id);
+    await this.studentRepository.remove(student);
+    return { message: `Student with ID ${id} removed successfully` };
   }
 }

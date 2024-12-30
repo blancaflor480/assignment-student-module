@@ -1,15 +1,19 @@
-import { Controller, Patch, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
-import { UpdateStudentDto } from './dto/update-student.dto';
-
 
 @Controller('students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentService.update(+id, updateStudentDto);
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK) 
+  async remove(@Param('id') id: string) {
+    return await this.studentService.remove(+id);
   }
-
 }
